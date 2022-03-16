@@ -1,10 +1,13 @@
 package com.fseguel.springboot.app.gateway.filters.factory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+//import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -24,20 +27,33 @@ public class EjemploGatewayFilterFactory extends AbstractGatewayFilterFactory<Ej
 
 	@Override
 	public GatewayFilter apply(Configuracion config) {
+//		return new OrderedGatewayFilter((exchange, chain) -> {}, 2)
 		return (exchange, chain) -> {
 			log.info("ejecutando pre gateway filter factory: " + config.mensaje);
 			return chain.filter(exchange).then(Mono.fromRunnable(() -> {
 				
 				Optional.ofNullable(config.cookieValor).ifPresent( cookie -> {
-					exchange.getResponse().addCookie(ResponseCookie.from(config.cookieValor, cookie).build());
+					exchange.getResponse().addCookie(ResponseCookie.from(config.cookieNombre, cookie).build());
 				});
 				
 				log.info("ejecutando post gateway filter factory: " + config.mensaje);				
 			}));			
 		};
 	}
-
 	
+	
+	@Override
+	public List<String> shortcutFieldOrder() {
+		return Arrays.asList("mensaje", "cookieNombre", "cookieValor");
+	}
+
+
+	@Override
+	public String name() {
+		return "EjemploCookie";
+	}
+
+
 	public static class Configuracion {
 		
 		private String mensaje;
