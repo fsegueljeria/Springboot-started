@@ -1,10 +1,31 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+        defecto:
+          sliding-window-size: 6 #cantidad de peticiones para activar la ventana deslizante
+          failure-rate-threshold: 50 # tasa de fallo
+          wait-duration-in-open-state: 20s # tiempo de espera en estado abierto
+          permitted-number-of-calls-in-half-open-state: 4 # cantidad de llamadas permitidas en estado semi abierto
+          slow-call-rate-threshold: 50 #tasa de lentitud
+          slow-call-duration-threshold: 2s # tiempo de espera considerada una llamada lenta
+    instances:
+      productos: # nombre del corto circuito definido en ItemConfig
+        base-config: defecto
+  timelimiter:
+    configs:
+      defecto:
+        timeout-duration: 2s #duracion timeout por defecto cortocircuito 
+    instances:
+      productos:
+        base-config: defecto
+
 spring:
   cloud:
     gateway:
       routes:
       - id: servicio-productos
         uri: lb://servicio-productos
-        predicates:
+        predicates:          
           - Path=/api/productos/**
 #          - Header=token, \d+
 #          - Header=Content-Type, application/json
@@ -12,8 +33,13 @@ spring:
 #          - Query=color
 #          - Cookie=color, azul
         filters:
+          - name: CircuitBreaker
+            args:
+              name: productos
+              statusCodes: 500
+              fallbackUri: forward:/api/items/ver/9/cantidad/5
           - StripPrefix=2
-          - EjemploCookie=Hola mi mensaje personalizado, usuario, FelipeSeguel
+          - EjemploCookie=Hola mi mensaje personalizado, usuario, FelipeSeguel 
 #        - name: Ejemplo
 #          args:
 #            mensaje: Hola mi mensaje personalizado

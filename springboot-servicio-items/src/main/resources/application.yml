@@ -1,0 +1,20 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+        defecto:
+          sliding-window-size: 6 #cantidad de peticiones para activar la ventana deslizante
+          failure-rate-threshold: 50 # tasa de fallo
+          wait-duration-in-open-state: 20s # tiempo de espera en estado abierto
+          permitted-number-of-calls-in-half-open-state: 4 # cantidad de llamadas permitidas en estado semi abierto
+          slow-call-rate-threshold: 50 #tasa de lentitud
+          slow-call-duration-threshold: 2s # tiempo de espera considerada una llamada lenta
+    instances:
+      items: # nombre del corto circuito definido en ItemConfig
+        base-config: defecto
+  timelimiter:
+    configs:
+      defecto:
+        timeout-duration: 2s #duracion timeout por defecto cortocircuito 
+    instances:
+      items:
+        base-config: defecto
