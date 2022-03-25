@@ -1,4 +1,4 @@
-package com.fseguel.springboot.app.productos.models.entity;
+package com.fseguel.springboot.app.commons.models.entity;
 
 import java.io.Serializable;
 import java.util.Date;

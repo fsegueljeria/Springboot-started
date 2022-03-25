@@ -1,5 +1,7 @@
 package com.fseguel.springboot.app.item.models;
 
+import com.fseguel.springboot.app.commons.models.entity.Producto;
+
 public class Item {
 
 	private Producto producto;

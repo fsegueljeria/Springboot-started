@@ -3,7 +3,7 @@ package com.fseguel.springboot.app.item.models.service;
 import java.util.List;
 
 import com.fseguel.springboot.app.item.models.Item;
-import com.fseguel.springboot.app.item.models.Producto;
+import com.fseguel.springboot.app.commons.models.entity.Producto;
 
 public interface ItemService {
 	
