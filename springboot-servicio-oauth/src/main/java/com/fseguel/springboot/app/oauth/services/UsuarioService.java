@@ -18,7 +18,7 @@ import com.fseguel.springboot.app.commons.usuarios.models.entity.Usuario;
 import com.fseguel.springboot.app.oauth.clients.IUsuarioFeignClient;
 
 @Service
-public class UsuarioService implements UserDetailsService {
+public class UsuarioService implements IUsuarioService, UserDetailsService {
 
 	private Logger log = LoggerFactory.getLogger(UsuarioService.class); 
 	
@@ -27,22 +27,37 @@ public class UsuarioService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = client.findByUsername(username);
 		
-		if(usuario == null) {
+		Usuario usuario = null;
+		try {
+			usuario = client.findByUsername(username);
+			
+			List<GrantedAuthority> autorithies = usuario.getRoles()
+					.stream()
+					.map(role -> new SimpleGrantedAuthority(role.getNombre()))
+					.peek(autority -> log.info("Role: " + autority.getAuthority()))
+					.collect(Collectors.toList());
+			
+			log.info("Usuario autenticado: " + username);
+			
+			return new User(usuario.getUsername(), usuario.getPassword(),usuario.getEnabled(), true, true, true, autorithies);
+			
+		} catch (Exception e) {
 			log.error("Error en Login, no existe el usuario " + username + " en el sistema");
 			throw new UsernameNotFoundException("Error en Login, no existe el usuario " + username + " en el sistema");
 		}
-			
-		List<GrantedAuthority> autorithies = usuario.getRoles()
-				.stream()
-				.map(role -> new SimpleGrantedAuthority(role.getNombre()))
-				.peek(autority -> log.info("Role: " + autority.getAuthority()))
-				.collect(Collectors.toList());
 		
-		log.info("Usuario autenticado: " + username);
-		
-		return new User(usuario.getUsername(), usuario.getPassword(),usuario.getEnabled(), true, true, true, autorithies);
+	}
+
+	@Override
+	public Usuario findByUsername(String username) {
+		return client.findByUsername(username);
+	}
+
+	@Override
+	public Usuario update(Usuario usuario, Long id) {
+		client.update(usuario, id);
+		return null;
 	}
 
 }

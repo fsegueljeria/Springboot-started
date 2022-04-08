@@ -1,5 +1,6 @@
-insert into usuarios(username,password,enabled, nombre, apellido, email) values('andres', '12345', 1, 'Andres', 'Guzman','profe@gmail.com');
-insert into usuarios(username,password,enabled, nombre, apellido, email) values('jhon', '12345', 1, 'Jhon', 'Doe', 'DoeJhon.Doe@gmail.com');
+insert into usuarios(username,password,enabled, nombre, apellido, email) values('andres', '$2a$10$W0RMhI4jgdGEYHAKmsU0uusyOJwZD8GdEdNBfYpbWxLsnaXhmHVea', 1, 'Andres', 'Guzman','profe@gmail.com');
+insert into usuarios(username,password,enabled, nombre, apellido, email) values('admin', '$2a$10$ej9N0SqwGZ/3yR8KBiCN9uxeia/y/oj5wKlx6U9irekUx2v8WpjbK', 1, 'Admin', 'root', 'admin@gmail.com');
+insert into usuarios(username,password,enabled, nombre, apellido, email) values('jhon', '$2a$10$sKsHFwLiMnYDbft/WtupxOvSzsvjK7TSqtD2Njtya8zxeNl04fHFO', 1, 'Jhon', 'Doe', 'DoeJhon.Doe@gmail.com');
 
 
 insert into roles(nombre) values('ROLE_USER');
