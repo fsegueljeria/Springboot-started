@@ -20,12 +20,14 @@ public class JwtAuthenticationFilter implements WebFilter{
 	
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+		
 		return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
-				.filter(authHeader -> authHeader.startsWith("Bearer "))
-				.switchIfEmpty(chain.filter(exchange).then(Mono.empty()))
+				.filter(authHeader -> authHeader.startsWith("Bearer ")) 
+				.switchIfEmpty(chain.filter(exchange).then(Mono.empty())) //  retorna flujo vacio 
 				.map(token -> token.replace("Bearer ", ""))
-				.flatMap(token -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(null, token)))
-			    .flatMap(authentication -> chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication)));
+				.flatMap(token -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(null, token))) // retorna otro flujo Mono o Flux, no un objeto normal como map
+			    .flatMap(authentication -> chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))); 
+		
 	}
 
 	

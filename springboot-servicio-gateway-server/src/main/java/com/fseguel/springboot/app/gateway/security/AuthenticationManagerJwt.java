@@ -20,31 +20,31 @@ import io.jsonwebtoken.security.Keys;
 import reactor.core.publisher.Mono;
 
 @Component
-public class AuthenticationManagerJwt implements ReactiveAuthenticationManager {
+public class AuthenticationManagerJwt implements ReactiveAuthenticationManager { 
 
 	@Value("${config.security.oauth.jwt.key}")
 	private String llaveJwt;
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public Mono<Authentication> authenticate(Authentication authentication) {
+	public Mono<Authentication> authenticate(Authentication authentication) {  // flujo que retorna 1 elemento Authentication
+		// just convierte el token en un flujo Mono
+		
 		return Mono.just(authentication.getCredentials().toString())
-				.map(token -> {
-					SecretKey llave = Keys.hmacShaKeyFor(Base64.getEncoder().encode(llaveJwt.getBytes()));
-					return Jwts.parserBuilder().setSigningKey(llave).build().parseClaimsJws(token).getBody();
-				})
-				.map(claims-> {
-					String username = claims.get("usern_name", String.class);
-					List<String> roles = claims.get("authorities", List.class);
-					
-					//Collection<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role))
-					//		.collect(Collectors.toList());
-					
-					Collection<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new) // pasa por argumento el valor role del map utilizando referencia de metodo
-							.collect(Collectors.toList());
-					
-					return new UsernamePasswordAuthenticationToken(username, null, authorities);
-				});
+					.map(token -> {
+						SecretKey llave = Keys.hmacShaKeyFor(Base64.getEncoder().encode(llaveJwt.getBytes())); // llave compatible con JJWT
+						return Jwts.parserBuilder().setSigningKey(llave).build().parseClaimsJws(token).getBody(); // 
+					})
+					.map(claims-> {
+						String username = claims.get("user_name", String.class);
+						List<String> roles = claims.get("authorities", List.class);
+						
+						Collection<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new) // pasa por argumento el valor role del map utilizando referencia de metodo
+								.collect(Collectors.toList());
+						
+						return new UsernamePasswordAuthenticationToken(username, null, authorities);
+					});
+		
 	}
 
 }

@@ -1,13 +1,18 @@
 package com.fseguel.springboot.app.gateway.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @EnableWebFluxSecurity
 public class SpringSecurityConfig {
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
 	@Bean
 	public SecurityWebFilterChain configure(ServerHttpSecurity http) {
@@ -21,7 +26,9 @@ public class SpringSecurityConfig {
 				.pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN","USER")
 				.pathMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/usuarios/**").hasRole("ADMIN")
 				.anyExchange().authenticated()
-				.and().csrf().disable()
+				.and()
+				.addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION) 
+				.csrf().disable() // deshabilita token csrf uso con jsp, thymeleaf 
 				.build();
 	}
 }
