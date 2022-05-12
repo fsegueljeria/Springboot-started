@@ -18,17 +18,16 @@ public class SpringSecurityConfig {
 	public SecurityWebFilterChain configure(ServerHttpSecurity http) {
 		return http.authorizeExchange()
 				.pathMatchers("/api/security/oauth/**").permitAll()
-				.pathMatchers(HttpMethod.GET, "/api/productos/listar", 
-											  "/api/items/listar", 
-											  "/api/usuarios/usuarios", 
-											  "/api/items/ver/{id}/cantidad/{cantidad}",
-											  "/api/productos/ver/{id}").permitAll()
-				.pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN","USER")
+				.pathMatchers(HttpMethod.GET, "/api/productos/listar",
+						"/api/items/listar",
+						"/api/usuarios/usuarios",
+						"/api/items/ver/{id}/cantidad/{cantidad}",
+						"/api/productos/ver/{id}").permitAll()
+				.pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN", "USER")
 				.pathMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/usuarios/**").hasRole("ADMIN")
 				.anyExchange().authenticated()
-				.and()
-				.addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION) 
-				.csrf().disable() // deshabilita token csrf uso con jsp, thymeleaf 
+				.and().addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+				.csrf().disable()
 				.build();
 	}
 }

@@ -44,12 +44,12 @@ public class ProductoController {
 	public Producto detalle(@PathVariable Long id) throws InterruptedException {
 		Producto producto = productoService.findById(id);
 		
-		if (id.equals(10L)) {
-			throw new IllegalStateException("Producto no encontrado");
-		}
-		if (id.equals(7L)) {
-			TimeUnit.SECONDS.sleep(5L);
-		}
+//		if (id.equals(10L)) {
+//			throw new IllegalStateException("Producto no encontrado");
+//		}
+//		if (id.equals(7L)) {
+//			TimeUnit.SECONDS.sleep(5L);
+//		}
 		producto.setPort(Integer.parseInt(env.getProperty("local.server.port")));
 		return producto;
 	}
