@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -25,6 +26,9 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 	@Autowired
 	private IUsuarioFeignClient client;
 	
+	@Autowired
+	private Tracer tracer;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
@@ -43,7 +47,9 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 			return new User(usuario.getUsername(), usuario.getPassword(),usuario.getEnabled(), true, true, true, autorithies);
 			
 		} catch (Exception e) {
-			log.error("Error en Login, no existe el usuario " + username + " en el sistema");
+			String mensajeError = "Error en Login, no existe el usuario " + username + " en el sistema"; 
+			log.error(mensajeError);
+			tracer.currentSpan().tag("error.mensaje", mensajeError + " : " + e.getMessage());
 			throw new UsernameNotFoundException("Error en Login, no existe el usuario " + username + " en el sistema");
 		}
 		
